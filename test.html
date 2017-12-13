@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Missile Command</title>
+    <script type="text/javascript" src="./three.js"></script>
+    <script type="text/javascript" src="./tween.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="ThreeJs_output"></div>
+
+<script type="text/javascript">
+    var icosahedronList = [];
+    var buildingList = [];
+
+    function remove(array, element) {
+        const index = array.indexOf(element);
+
+        if (index !== -1) {
+            array.splice(index, 1);
+        }
+    }
+
+    function init() {
+
+        var scene = new THREE.Scene();
+        scene.background = new THREE.CubeTextureLoader()
+            .setPath( 'skybox/' )
+            .load( [ 'px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg' ] );
+
+        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100000);
+        camera.position.x = 0;
+        camera.position.y = 20;
+        camera.position.z = 50;
+        camera.lookAt(0, 20, 0);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0xEEEEEE);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+
+        // create light
+        var light = new THREE.PointLight( 0xc2e6c7, 1, 0, 1);
+        light.position.set(0, 30, 30);
+        scene.add(light);
+
+        //Create a plane
+        var planeGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        var planeMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.x = 0;
+        plane.position.y = 0;
+        plane.position.z = 0;
+        scene.add(plane);
+ 
+        //Create cubes
+        var cubeGeometry_0 = new THREE.BoxGeometry(2.5, 8, 2.5, 1, 1, 1);
+        var cubeMaterial_0 = new THREE.MeshPhongMaterial({
+            color: 0x0090ff,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cube_0 = new THREE.Mesh(cubeGeometry_0, cubeMaterial_0);
+        cube_0.position.x = -20;
+        cube_0.position.y = 4;
+        cube_0.position.z = 0;
+        scene.add(cube_0);
+
+        var cubeGeometry_1 = new THREE.BoxGeometry(2.5, 8, 2.5, 1, 1, 1);
+        var cubeMaterial_1 = new THREE.MeshPhongMaterial({
+            color: 0x0090ff,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cube_1 = new THREE.Mesh(cubeGeometry_1, cubeMaterial_1);
+        cube_1.position.x = -10;
+        cube_1.position.y = 4;
+        cube_1.position.z = 0;
+        scene.add(cube_1);
+
+        var cubeGeometry_2 = new THREE.BoxGeometry(2.5, 8, 2.5, 1, 1, 1);
+        var cubeMaterial_2 = new THREE.MeshPhongMaterial({
+            color: 0x0090ff,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cube_2 = new THREE.Mesh(cubeGeometry_2, cubeMaterial_2);
+        cube_2.position.x = 10;
+        cube_2.position.y = 4;
+        cube_2.position.z = 0;
+        scene.add(cube_2);
+
+        var cubeGeometry_3 = new THREE.BoxGeometry(2.5, 8, 2.5, 1, 1, 1);
+        var cubeMaterial_3 = new THREE.MeshPhongMaterial({
+            color: 0x0090ff,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cube_3 = new THREE.Mesh(cubeGeometry_3, cubeMaterial_3);
+        cube_3.position.x = 20;
+        cube_3.position.y = 4;
+        cube_3.position.z = 0;
+        scene.add(cube_3);
+
+        //Create cylinders
+        var cylinderGeometry_0 = new THREE.CylinderGeometry(0, 2.5, 8, 4, 1, false);
+        var cylinderMaterial_0 = new THREE.MeshPhongMaterial({
+            color: 0xf1ff00,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cylinder_0 = new THREE.Mesh(cylinderGeometry_0, cylinderMaterial_0);
+        cylinder_0.position.x = -30;
+        cylinder_0.position.y = 4;
+        cylinder_0.position.z = 0;
+        scene.add(cylinder_0);
+
+        var cylinderGeometry_1 = new THREE.CylinderGeometry(0, 2.5, 8, 4, 1, false);
+        var cylinderMaterial_1 = new THREE.MeshPhongMaterial({
+            color: 0xf1ff00,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cylinder_1 = new THREE.Mesh(cylinderGeometry_1, cylinderMaterial_1);
+        cylinder_1.position.x = 0;
+        cylinder_1.position.y = 4;
+        cylinder_1.position.z = 0;
+        scene.add(cylinder_1);
+
+        var cylinderGeometry_2 = new THREE.CylinderGeometry(0, 2.5, 8, 4, 1, false);
+        var cylinderMaterial_2 = new THREE.MeshPhongMaterial({
+            color: 0xf1ff00,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var cylinder_2 = new THREE.Mesh(cylinderGeometry_2, cylinderMaterial_2);
+        cylinder_2.position.x = 30;
+        cylinder_2.position.y = 4;
+        cylinder_2.position.z = 0;
+        scene.add(cylinder_2);
+
+        //create icosahedrons
+        var icosahedronGeometry_0 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_0 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_0 = new THREE.Mesh(icosahedronGeometry_0, icosahedronMaterial_0);
+        icosahedron_0.position.x = -30;
+        icosahedron_0.position.y = 60;
+        icosahedron_0.position.z = 0;
+        scene.add(icosahedron_0)
+
+        var icosahedronGeometry_1 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_1 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_1 = new THREE.Mesh(icosahedronGeometry_1, icosahedronMaterial_1);
+        icosahedron_1.position.x = -20;
+        icosahedron_1.position.y = 60;
+        icosahedron_1.position.z = 0;
+        scene.add(icosahedron_1);
+
+        var icosahedronGeometry_2 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_2 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_2 = new THREE.Mesh(icosahedronGeometry_2, icosahedronMaterial_2);
+        icosahedron_2.position.x = -10;
+        icosahedron_2.position.y = 60;
+        icosahedron_2.position.z = 0;
+        scene.add(icosahedron_2);
+
+        //create icosahedrons
+        var icosahedronGeometry_3 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_3 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_3 = new THREE.Mesh(icosahedronGeometry_3, icosahedronMaterial_3);
+        icosahedron_3.position.x = 0;
+        icosahedron_3.position.y = 60;
+        icosahedron_3.position.z = 0;
+        scene.add(icosahedron_3);
+
+        var icosahedronGeometry_4 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_4 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_4 = new THREE.Mesh(icosahedronGeometry_4, icosahedronMaterial_4);
+        icosahedron_4.position.x = 10;
+        icosahedron_4.position.y = 60;
+        icosahedron_4.position.z = 0;
+        scene.add(icosahedron_4);
+
+        var icosahedronGeometry_5 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_5 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_5 = new THREE.Mesh(icosahedronGeometry_5, icosahedronMaterial_5);
+        icosahedron_5.position.x = 20;
+        icosahedron_5.position.y = 60;
+        icosahedron_5.position.z = 0;
+        scene.add(icosahedron_5);
+
+        var icosahedronGeometry_6 = new THREE.IcosahedronGeometry(3, 3);
+        var icosahedronMaterial_6 = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x000000,
+            specular: 0x111111,
+            shininess: 30
+        });
+        var icosahedron_6 = new THREE.Mesh(icosahedronGeometry_6, icosahedronMaterial_6);
+        icosahedron_6.position.x = 30;
+        icosahedron_6.position.y = 60;
+        icosahedron_6.position.z = 0;
+        scene.add(icosahedron_6);
+
+        icosahedronList = [icosahedron_0, icosahedron_1, icosahedron_2, icosahedron_3, icosahedron_4, icosahedron_5, icosahedron_6];
+        buildingList = [cylinder_0, cylinder_1, cylinder_2, cube_0, cube_1, cube_2, cube_3];
+
+        document.getElementById("ThreeJs_output").appendChild(renderer.domElement);
+
+        function animate() {
+            renderer.render(scene, camera);
+
+            icosahedron_0.position.x += 0.06;
+            icosahedron_1.position.x += 0.04;
+            icosahedron_2.position.x += 0.02;
+
+            icosahedron_4.position.x -= 0.02;
+            icosahedron_5.position.x -= 0.04;
+            icosahedron_6.position.x -= 0.06;
+
+            icosahedron_0.position.y -= 0.05;
+            icosahedron_1.position.y -= 0.05;
+            icosahedron_2.position.y -= 0.05;
+            icosahedron_3.position.y -= 0.05;
+            icosahedron_4.position.y -= 0.05;
+            icosahedron_5.position.y -= 0.05;
+            icosahedron_6.position.y -= 0.05;
+
+            for (var i = 0; i < icosahedronList.length; i++)
+            {
+                var myIcosahedron = icosahedronList[i];
+                var originPoint = myIcosahedron.position.clone();
+                for (var vertexIndex = 0; vertexIndex < myIcosahedron.geometry.vertices.length; vertexIndex++)
+                {
+                    var localVertex = myIcosahedron.geometry.vertices[vertexIndex].clone();
+                    var globalVertex = localVertex.applyMatrix4( myIcosahedron.matrix );
+                    var directionVector = globalVertex.sub( myIcosahedron.position );
+
+                    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+                    var collisionResults = ray.intersectObjects( buildingList );
+                    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+                        scene.remove(collisionResults[0].object);
+                        scene.remove(myIcosahedron);
+                        remove(buildingList, collisionResults[0].object);
+                        remove(icosahedronList, myIcosahedron);
+                    }
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+        function onDocumentMouseDown( event ) {
+            event.preventDefault();
+
+            var mouse = new THREE.Vector3(
+                ( event.clientX / window.innerWidth ) * 2 - 1,
+                - ( event.clientY / window.innerHeight ) * 2 + 1,
+                0
+            );
+
+            var distance_0 = cylinder_0.position.distanceTo( mouse );
+            var distance_1 = cylinder_1.position.distanceTo( mouse );
+            var distance_2 = cylinder_2.position.distanceTo( mouse );
+
+            var whichCylinder = cylinder_0;
+            if(distance_1 < distance_0)
+            {
+                whichCylinder = cylinder_1;
+            }
+            if(distance_2 < whichCylinder.position.distanceTo(mouse))
+            {
+                whichCylinder = cylinder_2;
+            }
+
+            var icosahedronGeometry_n = new THREE.IcosahedronGeometry(1, 2);
+            var icosahedronMaterial_n = new THREE.MeshPhongMaterial({
+                color: 0xf1ff00,
+                emissive: 0x000000,
+                specular: 0x111111,
+                shininess: 30
+            });
+            var missile = new THREE.Mesh(icosahedronGeometry_n, icosahedronMaterial_n);
+            missile.position = whichCylinder.position.clone();
+            scene.add(missile);
+
+            var direction = new THREE.Vector3();
+            direction.subVectors(mouse, missile.position).normalize();
+            function animation()
+            {
+                if(missile.position.equals(mouse))
+                {
+                    scene.remove(missile);
+                    return;
+                }
+                missile.position.add( direction.multiplyScalar(0.05) );
+
+                var originPoint = missile.position.clone();
+                for (var vertexIndex = 0; vertexIndex < missile.geometry.vertices.length; vertexIndex++)
+                {
+                    var localVertex = missile.geometry.vertices[vertexIndex].clone();
+                    var globalVertex = localVertex.applyMatrix4( missile.matrix );
+                    var directionVector = globalVertex.sub( missile.position );
+
+                    var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+                    var collisionResults = ray.intersectObjects( icosahedronList );
+                    if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ){
+                        scene.remove(collisionResults[0].object);
+                        scene.remove(missile);
+                        remove(icosahedronList, collisionResults[0].object);
+
+                        return;
+                    }
+                }
+                requestAnimationFrame(animation);
+            }
+            animation();
+        }
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
