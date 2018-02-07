@@ -19,6 +19,9 @@
     var icosahedronList = [];
     var buildingList = [];
 
+    var canvas = document.getElementById("ThreeJs_output");
+    var rect = canvas.getBoundingClientRect();
+
     function remove(array, element) {
         const index = array.indexOf(element);
 
@@ -254,18 +257,18 @@
         icosahedronList = [icosahedron_0, icosahedron_1, icosahedron_2, icosahedron_3, icosahedron_4, icosahedron_5, icosahedron_6];
         buildingList = [cylinder_0, cylinder_1, cylinder_2, cube_0, cube_1, cube_2, cube_3];
 
-        document.getElementById("ThreeJs_output").appendChild(renderer.domElement);
+        canvas.appendChild(renderer.domElement);
 
         function animate() {
             renderer.render(scene, camera);
 
             icosahedron_0.position.x += 0.06;
-            icosahedron_1.position.x += 0.04;
-            icosahedron_2.position.x += 0.02;
+            icosahedron_1.position.x += 0.05;
+            icosahedron_2.position.x += 0.04;
 
-            icosahedron_4.position.x -= 0.02;
-            icosahedron_5.position.x -= 0.04;
-            icosahedron_6.position.x -= 0.06;
+            icosahedron_4.position.x -= 0.03;
+            icosahedron_5.position.x -= 0.02;
+            icosahedron_6.position.x -= 0.01;
 
             icosahedron_0.position.y -= 0.05;
             icosahedron_1.position.y -= 0.05;
@@ -305,11 +308,16 @@
         function onDocumentMouseDown( event ) {
             event.preventDefault();
 
-            var mouse = new THREE.Vector3(
+            var vector = new THREE.Vector3();
+            vector.set(
                 ( event.clientX / window.innerWidth ) * 2 - 1,
                 - ( event.clientY / window.innerHeight ) * 2 + 1,
-                0
-            );
+                0.5 );
+
+            vector.unproject( camera );
+            var dir = vector.sub( camera.position ).normalize();
+            var distance = - camera.position.z / dir.z;
+            var mouse = camera.position.clone().add( dir.multiplyScalar( distance ) );
 
             var distance_0 = cylinder_0.position.distanceTo( mouse );
             var distance_1 = cylinder_1.position.distanceTo( mouse );
@@ -333,19 +341,19 @@
                 shininess: 30
             });
             var missile = new THREE.Mesh(icosahedronGeometry_n, icosahedronMaterial_n);
-            missile.position = whichCylinder.position.clone();
+            missile.position.set(whichCylinder.position.x, whichCylinder.position.y, whichCylinder.position.z);
             scene.add(missile);
 
             var direction = new THREE.Vector3();
             direction.subVectors(mouse, missile.position).normalize();
             function animation()
             {
-                if(missile.position.equals(mouse))
+                if(missile.position.distanceTo(mouse) < 0.1)
                 {
                     scene.remove(missile);
                     return;
                 }
-                missile.position.add( direction.multiplyScalar(0.05) );
+                missile.position.add( direction.clone().multiplyScalar(0.2) );
 
                 var originPoint = missile.position.clone();
                 for (var vertexIndex = 0; vertexIndex < missile.geometry.vertices.length; vertexIndex++)
